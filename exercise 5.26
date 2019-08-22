@@ -1,0 +1,56 @@
+/* without using number theory for checking the prime factors and getting perfect number algo */
+#include <stdio.h>
+
+void printNPerfectNumbers(int number);
+int sumNumberFactors(int number);
+int getFactor(int number);
+
+int main(void)
+{
+	int number;
+	printf("Please enter limit to search for perfect numbers: ");
+	scanf("%d", &number);
+	printNPerfectNumbers(number);
+	return 0;
+}
+void printNPerfectNumbers(int number){
+	for(; number > 1; number--){
+		if (number == sumNumberFactors(number))
+			printf("There's perfect number found: %d\n", number);
+	}
+}
+int sumNumberFactors(int number){
+	int factor = 0;
+	int lastFactor = 0;
+	int sum = 0;
+	while(1){
+		factor = getFactor(number);
+		if (lastFactor != factor){
+			lastFactor = factor;
+			sum += lastFactor;
+		}
+		else
+			break;
+	}
+	return sum;
+}
+int getFactor(int number){
+	static int SavedNumber;
+	static int nextFactor;
+	static int counter;
+	if (SavedNumber != number)
+		SavedNumber = number,
+		nextFactor = 0,
+		counter = 0;
+	if (0 == nextFactor)
+		return ++nextFactor;
+	while ((nextFactor + counter + 1) < number){
+		counter++;
+		if (number % (nextFactor + counter) == 0){
+			nextFactor += counter;
+			counter = 0;
+			return nextFactor;
+		}
+	}
+	return nextFactor;
+}
