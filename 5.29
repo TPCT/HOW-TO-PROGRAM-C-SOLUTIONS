@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int gcd(int firstNumber, int secondNumber){
+	int commonDivisor;
+	if (secondNumber == 0 && firstNumber)
+		return firstNumber;
+	if (firstNumber == 0 && secondNumber)
+		return secondNumber;
+	if (firstNumber == 0 && secondNumber == 0)
+		return -1;
+	int minimumNumber = (firstNumber < secondNumber) ? firstNumber : secondNumber;
+	for(int i = 1; i <= minimumNumber; i++){
+		if ((firstNumber % i == 0) && (secondNumber % i == 0));
+			commonDivisor = i;
+	}
+	return commonDivisor;
+}
+
+int main(void){
+	int firstScannedNumber;
+	int secondScannedNumber;
+	do{
+		printf("Please first number:");
+		scanf("%d[^\n]", &firstScannedNumber);
+		printf("Please enter second number:");
+		scanf("%d[^\n]", &secondScannedNumber);
+		printf("the greatest common divisor is: %d\n", gcd(firstScannedNumber, secondScannedNumber));
+	}while(1);
+}
