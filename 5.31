@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+int simulateToss(void){
+	return rand() % 2;
+}
+void frequancy(int numberOfTrials){
+	int numberOfHeads = 0;
+	int numberOfTails = 0;
+	for(int i = 0; i < numberOfTrials; i++){
+		if (simulateToss()){
+			numberOfHeads++;
+		}else{
+			numberOfTails++;
+		}
+	}
+	printf("The Frequancy of Heads = %d, The Frequancy of Tails = %d\n", numberOfHeads, numberOfTails);
+}
+int main(void){
+	srand(time(NULL) * rand() / rand());
+	frequancy(1000);
+}
