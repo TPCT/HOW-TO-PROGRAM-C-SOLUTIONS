@@ -1,0 +1,29 @@
+#include <math.h>
+#include <stdio.h>
+
+char isPrime(int number){
+	/* this the first task needed */
+	if (number <= 1)
+		return 0;
+	for(int i = 2; i < (int)sqrt(number / 2); i++){
+		if (number % i == 0)
+			return 0;
+	}
+	return 1;
+}
+int printNPrimes(int start, int end){
+	/* second task needed is to print 10000 prime numbers */
+	int numberOfRealPrimes = 0;
+	for (int i = start; i <= end; i++){
+		printf("%d", i);
+		if (isPrime(i))
+			printf(" is a prime number\n"),
+			numberOfRealPrimes++;
+		else
+			printf(" is not a prime number\n");
+	}
+	return numberOfRealPrimes;
+}
+int main(void){
+	printf("the number of primes between 1, 10000 is:%d\n", printNPrimes(1, 10000));
+}
