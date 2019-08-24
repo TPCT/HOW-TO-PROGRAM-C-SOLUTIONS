@@ -16,6 +16,21 @@ int gcd(int firstNumber, int secondNumber){
 	return commonDivisor;
 }
 
+#define getMin(x, y) (x > y ? y : x)
+#define getMax(x, y) (x > y ? x : y)
+
+int gcd2(int x, int y){
+	int tempOutput = getMax(x, y) - getMin(x, y);
+	int output = tempOutput;
+	while(tempOutput){
+		y = getMin(x, y);
+		x = tempOutput;
+		tempOutput = getMax(x, y) - getMin(x, y);
+		if (tempOutput)
+			output = tempOutput;
+	}
+	return output;
+}
 int main(void){
 	int firstScannedNumber;
 	int secondScannedNumber;
