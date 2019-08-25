@@ -1,0 +1,199 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define ROWS             50
+#define COLS             50
+#define COMMANDSIZE       7
+#define MOVEDOWN         '4'
+#define MOVEUP           '5'
+#define MOVERIGHT        '6'
+#define MOVELEFT         '7'
+#define HELP             'h'
+#define STOPWRITING      '1'
+#define STARTWRITING     '2'
+#define STARTERASER      '3'
+#define PRINTGRAPH       '8'
+#define EXIT             '9'
+#define COUNTERSTARTINDEX 2
+#define COMMANDSTARTINDEX 0
+#define COMMAINDEX        1
+
+void help(void);
+void getCmd(char command[]);
+void printBoard(char Board[][COLS], int rows, int cols);
+void execCmd(const char command[]);
+
+char graph[ROWS][COLS] = {0};
+
+int main(void){
+  char command[COMMANDSIZE] = {0};
+  do{
+    printf("Please enter command to execute (h to help):");
+    getCmd(command);
+    execCmd(command);
+  }while(1);
+}
+
+void execCmd(const char command[]){
+  static char penStatus = 0;
+  static int xPos = 0;
+  static int yPos = 0;
+  int counter = 0;
+  int cmd = command[0];
+  switch(cmd){
+    case HELP:
+      help();
+      break;
+    case STOPWRITING:
+      printf("Making Pen Up (Nothing Will Be Written)\n");
+      penStatus = 0;
+      break;
+    case STARTWRITING:
+      printf("Making Pen Down (Ones Will Be Written)\n");
+      penStatus = 1;
+      break;
+    case STARTERASER:
+      printf("Making Eraser Down (Zeros Will Be Written)\n");
+      penStatus = 2;
+      break;
+    case MOVEUP:
+    case MOVEDOWN:
+    case MOVERIGHT:
+    case MOVELEFT:
+      if (command[COMMAINDEX] == ','){
+        for(int i = COUNTERSTARTINDEX; (i < COMMANDSIZE - 1) && ((cmd = command[i]) != -1); i++){
+          if (cmd - '0' >= 0 && cmd - '0' <= 9){
+            counter *= 10;
+            counter += cmd - '0';
+          }
+          else{
+            printf("You have entered invalid number of moves\n");
+            return;
+          }
+        }
+        cmd = command[COMMANDSTARTINDEX];
+        if (cmd == MOVEDOWN){
+          if (!counter){
+            if (penStatus)
+              graph[yPos][xPos] = penStatus % 2;
+            printf("Current Position (%d, %d)\n", xPos, yPos);
+            break;
+          }
+          counter %= ROWS;
+          if (!counter) counter = ROWS;
+          for(int i = 0; i < counter; i++){
+            if (penStatus)
+              graph[yPos][xPos] = penStatus % 2;
+            yPos++;
+            if (yPos == ROWS)
+              yPos = 0;
+          }
+        }
+        else if (cmd == MOVEUP){
+          if (!counter){
+            if (penStatus)
+              graph[yPos][xPos] = penStatus % 2;
+            printf("Current Position (%d, %d)\n", xPos, yPos);
+            break;
+          }
+          counter %= ROWS;
+          if (!counter) counter = ROWS;
+          for(int i = 0; i < counter; i++){
+              if (penStatus)
+                graph[yPos][xPos] = penStatus % 2;
+              yPos--;
+              if (yPos < 0)
+                yPos = ROWS-1;
+          }
+        }
+        else if (cmd == MOVERIGHT){
+          if (!counter){
+            if (penStatus)
+              graph[yPos][xPos] = penStatus % 2;
+            printf("Current Position (%d, %d)\n", xPos, yPos);
+            break;
+          }
+          counter %= COLS;
+          if (!counter) counter = COLS;
+          for(int i = 0; i < counter; i++){
+            if (penStatus)
+              graph[yPos][xPos] = penStatus % 2;
+            xPos++;
+            if (xPos == COLS)
+              xPos = 0;
+          }
+        }
+        else{
+          if (!counter){
+            if (penStatus)
+              graph[yPos][xPos] = penStatus % 2;
+            printf("Current Position (%d, %d)\n", xPos, yPos);
+            break;
+          }
+          counter %= COLS;
+          if (!counter) counter = COLS;
+          for(int i = 0; i < counter; i++){
+            if (penStatus)
+              graph[yPos][xPos] = penStatus % 2;
+            xPos--;
+            if (xPos < 0)
+              xPos = COLS-1;
+          }
+        }
+        printf("Current Position (%d, %d)\n", xPos, yPos);
+      }else{
+        printf("You haved entered wrong format\n");
+      }
+      break;
+    case '8':
+      printBoard(graph, ROWS, COLS);
+      break;
+    case '9':
+      exit(0);
+  }
+} /* for executing the user entered command */
+void printBoard(char Board[][COLS], int rows, int cols){
+  for(int i = 0; i < rows; i++){
+    for(int j = 0; j < cols; j++)
+      if (Board[i][j])
+        printf("%d", Board[i][j]);
+      else
+        printf(" ");
+    printf("\n");
+  }
+} /* for printing the graphic board */
+void printBoard1(char Board[][COLS], int rows, int cols){
+  for(int j = 0; j < cols * 2 + 1; j++)
+    printf("-");
+  printf("\n");
+  for(int i = 0; i < rows; i++){
+    printf("|");
+    for(int j = 0; j < cols - 1; j++)
+      printf("%d|", Board[i][j]);
+    printf("%d|\n", Board[i][cols - 1]);
+    for(int j = 0; j < cols * 2 + 1; j++)
+      printf("-");
+    printf("\n");
+  }
+}
+void help(void){
+  printf( "PRESS 1 FOR PEN UP\n"
+          "PRESS 2 FOR PEN DOWN\n"
+          "PRESS 3 FOR ERASER DOWN\n"
+          "PRESS 4, NUMBER TO MOVE FORWARD THIS NUMBER OF STEPS\n"
+          "PRESS 5, NUMBER TO MOVE BACKWARD THIS NUMBER OF STEPS\n"
+          "PRESS 6, NUMBER TO MOVE RIGHT THIS NUMBER OF STEPS\n"
+          "PRESS 7, NUMBER TO MOVE LEFT THIS NUMBER OF STEPS\n"
+          "PRESS 8 TO PRINT THE BOARD\n"
+          "PRESS 9 END THE PROGRAM\n");
+} /* for printing help to the user */
+void getCmd(char command[]){
+  char character = 0;
+  for(int i = 0; (i < COMMANDSIZE - 1); character != ' ' ? i++ : i){
+    if (character != '\n' && (character =  getchar()) != EOF)
+      command[i] = character != '\n' ? character : -1;
+    else
+      command[i] = -1;
+  }
+} /* for getting the command from the user */
