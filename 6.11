@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <malloc.h>
+#ifndef NULL
+  #define NULL (void *)0
+#endif
+#define SIZE (rand() % 20)
+
+void printArray(int array[], int size){
+  int i = 0;
+  for(; i < size - 1; i++)
+    printf("%d ", array[i]);
+  printf("%d\n", array[size - 1]);
+  printf("Array length: %d\n", i + 1);
+}
+
+void bubbleSort(int array[], int size){
+  if (!array || !size)
+    return;
+  int hold;
+  int numberOfLoops = 0;
+  for(int i = size; i > 0; i--, size--){
+    for(int j = 0; j < size; j++){
+      if (array[j] > array[j + 1]){
+        hold = array[j];
+        array[j] = array[j + 1];
+        array[j + 1] = hold;
+      }
+      numberOfLoops++;
+    }
+  }
+  printf("The total number of movements: %d\n", numberOfLoops);
+}
+
+int *randArrayGen(int size){
+  if (!size)
+    return NULL;
+  int *array = (int *) calloc(size, sizeof(int));
+  for(int i = 0; i < size; i++){
+    array[i] = rand() % 100;
+  }
+  return array;
+}
+
+int main(void){
+  srand(time(NULL));
+  int *array;
+  int size;
+  time_t Clk = clock();
+  for(int i = 0; i < 1000; i++){
+    size = SIZE;
+    array = randArrayGen(size);
+    if (size)
+      printf("%d ", i);
+    bubbleSort(array, size);
+    free(array);
+  }
+  printf("Time take to perform 1000 bubble sorts: %lf\n", ((double)clock() - Clk)/CLOCKS_PER_SEC);
+  return 0;
+}
