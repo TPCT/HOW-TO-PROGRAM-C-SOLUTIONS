@@ -1,0 +1,64 @@
+#include <stdio.h>
+#define MAZEWIDTH 12
+#define MAZEHEIGHT 12
+#define true 1
+#define false 0
+
+char mazePuzzle[MAZEHEIGHT][MAZEWIDTH] = {{'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
+                                          {'#', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '#'},
+                                          {'.', '.', '#', '.', '#', '.', '#', '#', '#', '#', '.', '#'},
+                                          {'#', '#', '#', '.', '#', '.', '.', '.', '.', '#', '.', '#'},
+                                          {'#', '.', '.', '.', '.', '#', '#', '#', '.', '#', '.', '#'},
+                                          {'#', '#', '#', '#', '.', '#', '.', '#', '.', '#', '.', '.'},
+                                          {'#', '.', '.', '#', '.', '#', '.', '#', '.', '#', '.', '#'},
+                                          {'#', '#', '.', '#', '.', '#', '.', '#', '.', '#', '.', '#'},
+                                          {'#', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '#'},
+                                          {'#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '.', '#'},
+                                          {'#', '.', '.', '.', '.', '.', '.', '#', '.', '.', '.', '#'},
+                                          {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}};
+
+void removeTrace(char Board[MAZEHEIGHT][MAZEWIDTH], char BoardWidth, char BoardHeight, char startXPosition, char startYPosition, char EndXPosiiton, char EndYPosition);
+void printBoard(char Board[MAZEHEIGHT][MAZEWIDTH], char boardWidth, char boardHeight);
+char mazeSolverRecursive(char Board[MAZEHEIGHT][MAZEWIDTH], char boardWidth, char boardHeight, char xPos, char yPos);
+static inline char isValidPath(char Board[MAZEHEIGHT][MAZEWIDTH], char xPos, char yPos, char BoardWidth, char BoardHeight);
+
+int main(void){
+  mazeSolverRecursive(mazePuzzle, MAZEWIDTH, MAZEHEIGHT, 0, 2);
+  printBoard(mazePuzzle, MAZEWIDTH, MAZEHEIGHT);
+}
+
+char mazeSolverRecursive(char Board[MAZEHEIGHT][MAZEWIDTH], char BoardWidth, char BoardHeight, char xPos, char yPos){
+    if (isValidPath(Board, xPos, yPos, BoardWidth, BoardHeight) && xPos == BoardWidth - 1 || yPos == BoardHeight - 1){
+      Board[yPos][xPos] = '-';
+      printf("THE EXIT IS AT (%d, %d)\n", xPos + 1, yPos + 1);
+      return true;
+    }
+    if (isValidPath(Board, xPos, yPos, BoardWidth, BoardHeight)){
+      Board[yPos][xPos] = '-';
+      if (mazeSolverRecursive(Board, BoardWidth, BoardHeight, xPos + 1, yPos) == true)
+        return true;
+      if (mazeSolverRecursive(Board, BoardWidth, BoardHeight, xPos, yPos + 1) == true)
+        return true;
+      if (mazeSolverRecursive(Board, BoardWidth, BoardHeight, xPos, yPos - 1) == true)
+        return true;
+      if (mazeSolverRecursive(Board, BoardWidth, BoardHeight, xPos - 1, yPos) == true)
+        return true;
+      Board[yPos][xPos] = '.';
+    }
+    return false;
+}
+
+static inline char isValidPath(char Board[MAZEHEIGHT][MAZEWIDTH], char xPos, char yPos, char BoardWidth, char BoardHeight){
+  if (xPos >= 0 && xPos < BoardWidth && yPos >= 0 && yPos < BoardHeight && Board[yPos][xPos] != '#' && Board[yPos][xPos] != '-')
+    return true;
+  return false;
+}
+
+void printBoard(char Board[MAZEHEIGHT][MAZEWIDTH], char boardWidth, char boardHeight){
+  for(char i = 0; i < boardHeight; i++){
+    for(char j = 0; j < boardWidth-1; j++){
+      printf("%c ", Board[i][j]);
+    }
+    printf("%c\n", Board[i][boardWidth - 1]);
+  }
+}
