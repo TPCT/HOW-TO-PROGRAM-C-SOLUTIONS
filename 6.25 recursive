@@ -1,59 +1,59 @@
 #include <stdio.h>
-#include <time.h>
-#define startPointX 4
-#define startPointY 0
-#define BoardWidth  8
-#define BoardHeight 8
 
-char Board[BoardHeight][BoardWidth] = {0};
-char KnightMoves[8][2] = {{2,   1},
-                          {2,  -1},
-                          {-2,  1},
-                          {-2, -1},
-                          {1,   2},
-                          {-1,  2},
-                          {1,  -2},
-                          {-1, -2}};
-static inline char validMove(int x, int y){
-  if (x >= 0 && x < 8 && y >= 0 && y < 8)
-    return 1;
-  return 0;
+#define MAZEWIDTH 12
+#define MAZEHEIGHT 12
+#define true 1
+#define false 0
+
+char mazePuzzle[MAZEHEIGHT][MAZEWIDTH] = {{'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'},
+                                          {'#', '.', '.', '.', '#', '.', '.', '.', '.', '.', '.', '#'},
+                                          {'.', '.', '#', '.', '#', '.', '#', '#', '#', '#', '.', '#'},
+                                          {'#', '#', '#', '.', '#', '.', '.', '.', '.', '#', '.', '#'},
+                                          {'#', '.', '.', '.', '.', '#', '#', '#', '.', '#', '.', '#'},
+                                          {'#', '#', '#', '#', '.', '#', '.', '#', '.', '#', '.', '.'},
+                                          {'#', '.', '.', '#', '.', '#', '.', '#', '.', '#', '.', '#'},
+                                          {'#', '#', '.', '#', '.', '#', '.', '#', '.', '#', '.', '#'},
+                                          {'#', '.', '.', '.', '.', '.', '.', '.', '.', '#', '.', '#'},
+                                          {'#', '#', '#', '#', '#', '#', '.', '#', '#', '#', '.', '#'},
+                                          {'#', '.', '.', '.', '.', '.', '.', '#', '.', '.', '.', '#'},
+                                          {'#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'}};
+
+char mazeSolverRecursive(char Board[MAZEHEIGHT][MAZEWIDTH], char BoardWidth, char BoardHeight, char xPos, char yPos);
+void printBoard(char Board[MAZEHEIGHT][MAZEWIDTH], char BoardWidth, char BoardHeight);
+static inline char isValidPath(char Board[MAZEHEIGHT][MAZEWIDTH], char BoardWidth, char BoardHeight, char xPos, char yPos);
+
+char mazeSolverRecursive(char Board[MAZEHEIGHT][MAZEWIDTH], char BoardWidth, char BoardHeight, char xPos, char yPos){
+    if (isValidPath(Board, xPos, yPos, BoardWidth, BoardHeight) && xPos == BoardWidth - 1 || yPos == BoardHeight - 1){
+      Board[yPos][xPos] = '-';
+      printf("THE EXIT IS AT (%d, %d)\n", xPos + 1, yPos + 1);
+      return true;
+    }
+    if (isValidPath(Board, BoardWidth, BoardHeight, xPos, yPos)){
+      Board[yPos][xPos] = '-';
+      if (mazeSolverRecursive(Board, BoardWidth, BoardHeight, xPos + 1, yPos) == true)
+        return true;
+      if (mazeSolverRecursive(Board, BoardWidth, BoardHeight, xPos, yPos + 1) == true)
+        return true;
+      if (mazeSolverRecursive(Board, BoardWidth, BoardHeight, xPos, yPos - 1) == true)
+        return true;
+      if (mazeSolverRecursive(Board, BoardWidth, BoardHeight, xPos - 1, yPos) == true)
+        return true;
+      Board[yPos][xPos] = '.';
+    }
+    return false;
 }
 
-void PrintBoard(void){
-  printf("     ");
-  for(int i = 0; i < BoardWidth - 1; i++)
-    printf("%-2d ", i);
-  printf("%-2d\n", BoardWidth - 1);
-  printf("  ");
-  for(int i = 0; i < BoardWidth*3+1; i++)
-    printf("-");
-  printf("\n");
-  for(int i = 0; i < BoardHeight; i++){
-    printf("%-2d| ", i);
-    for(int j = 0; j < BoardWidth-1; j++){
-      printf("%-2d ", Board[i][j]);
+void printBoard(char Board[MAZEHEIGHT][MAZEWIDTH], char BoardWidth, char BoardHeight){
+  for(char i = 0; i < BoardHeight; i++){
+    for(char j = 0; j < BoardWidth-1; j++){
+      printf("%c ", Board[i][j]);
     }
-    printf("%-2d\n", Board[i][BoardWidth-1]);
+    printf("%c\n", Board[i][BoardWidth - 1]);
   }
 }
 
-void KnightsTourRecursive(int x, int y){
-  static char filledPoints = 1;
-  char Movement[1][2] = {x, y};
-  for(int i = 0; i < 8; i++){
-    Movement[0][0] = x + KnightMoves[i][0];
-    Movement[0][1] = y + KnightMoves[i][1];
-    if (validMove(Movement[0][0], Movement[0][1]) && !Board[Movement[0][1]][Movement[0][0]]){
-      Board[Movement[0][1]][Movement[0][0]] = filledPoints++;
-      printf("Moving From Point(%d, %d) to (%d, %d)\n", x, y, Movement[0][0], Movement[0][1]);
-      KnightsTourRecursive(Movement[0][0], Movement[0][1]);
-    }
-  }
-}
-
-int main(void){
-  KnightsTourIterative(startPointX, startPointY);
-  PrintBoard();
-  return 0;
+static inline char isValidPath(char Board[MAZEHEIGHT][MAZEWIDTH], char xPos, char yPos, char BoardWidth, char BoardHeight){
+  if (xPos >= 0 && xPos < BoardWidth && yPos >= 0 && yPos < BoardHeight && Board[yPos][xPos] != '#' && Board[yPos][xPos] != '-')
+    return true;
+  return false;
 }
