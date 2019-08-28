@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define false 0
+#define true 1
+
+typedef struct node* nodePtr;
+typedef struct node{
+  int value;
+  nodePtr nextNode;
+} listNode;
+
+nodePtr insertNode(nodePtr *node, int value);
+nodePtr pop(nodePtr *node);
+
+void concatLists(nodePtr *firstList, nodePtr *secondList);
+void push(nodePtr *stackHead, int value);
+void reverseLinkedList(nodePtr *node);
+void printLinkedList(nodePtr node);
+void freeLinkedList(nodePtr node);
+
+int main(void){
+}
+
+void concatLists(nodePtr *firstList, nodePtr *secondList){
+  if(firstList == NULL || secondList == NULL || *secondList == NULL)
+    return;
+  if (*firstList == NULL)
+    *firstList = *secondList;
+  nodePtr tempPtr = *firstList;
+  while(tempPtr->nextNode)
+    tempPtr = tempPtr->nextNode;
+  tempPtr->nextNode = *secondList;
+}
+
+nodePtr insertNode(nodePtr *node, int value){
+  if (node == NULL)
+    return NULL;
+  if(*node == NULL){
+    *node = (nodePtr) malloc(sizeof(listNode));
+    if(*node == NULL){
+      printf("%s\n", "There's no free memory to be allocated\n");
+      return NULL;
+    }else{
+        (*node)->value = value;
+        (*node)->nextNode = NULL;
+        return (*node);
+    }
+  }else{
+    (*node)->nextNode = insertNode(&(*node)->nextNode, value);
+  }
+  return (*node);
+}
+
+void push(nodePtr *stackHead, int value){
+  if(stackHead == NULL)
+    return;
+  nodePtr stackPointer = (nodePtr)malloc(sizeof(listNode));
+  if(stackPointer == NULL){
+    printf("There's no free memory to be allocated.\n");
+  }else{
+    stackPointer->value = value;
+    stackPointer->nextNode = *stackHead;
+    *stackHead = stackPointer;
+  }
+}
+
+nodePtr pop(nodePtr *node){
+  if (node == NULL || *node == NULL)
+    return NULL;
+  nodePtr tempNode = *node;
+  *node = (*node)->nextNode;
+  return tempNode;
+}
+void reverseLinkedList(nodePtr *node){
+  if (node == NULL || *node == NULL)
+    return;
+  nodePtr previousNode = NULL;
+  nodePtr currentNode = *node;
+  nodePtr nextNode = NULL;
+  while(currentNode != NULL){
+    nextNode = currentNode->nextNode;
+    currentNode->nextNode = previousNode;
+    previousNode = currentNode;
+    currentNode = nextNode;
+  }
+  *node = previousNode;
+}
+
+void printLinkedList(nodePtr node){
+  while(node != NULL){
+    if (node->nextNode)
+        printf("%d ", node->value);
+    else
+        printf("%d", node->value);
+    node = node->nextNode;
+  }
+  printf("\n");
+
+}
+
+void freeLinkedList(nodePtr node){
+  nodePtr tempNode = node;
+  while(tempNode != NULL){
+    node = node->nextNode;
+    free(tempNode);
+    tempNode = node;
+  }
+}
